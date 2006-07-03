@@ -1,5 +1,6 @@
 using System;
 using System.Xml;
+using System.Web;
 
 namespace XMLTVGrabber
 {
@@ -24,7 +25,7 @@ namespace XMLTVGrabber
 		{
 			XmlElement prog = doc.CreateElement("programme");
 
-			prog.SetAttribute("channel", channel);
+			prog.SetAttribute("channel", HttpUtility.HtmlDecode(channel));
 
 			// build start time
 			String xmlTVStart = startTime.ToString("yyyyMMddHHmmss ");
@@ -55,7 +56,7 @@ namespace XMLTVGrabber
 			parent.AppendChild(prog);
 
 			XmlElement titleEl = doc.CreateElement("title");
-			titleEl.InnerText = title;
+			titleEl.InnerText = HttpUtility.HtmlDecode(title);
 			prog.AppendChild(titleEl);
 
 			XmlElement subtitleEl = doc.CreateElement("sub-title");
@@ -63,7 +64,7 @@ namespace XMLTVGrabber
 			prog.AppendChild(subtitleEl);
 
 			XmlElement descEl = doc.CreateElement("desc");
-			descEl.InnerText = description;
+			descEl.InnerText = HttpUtility.HtmlDecode(description);
 			prog.AppendChild(descEl);
 
 			XmlElement ratingEl = doc.CreateElement("rating");
