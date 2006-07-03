@@ -115,9 +115,19 @@ namespace XMLTVGrabber
 
 		private DateTime parseStartDate(String dateString, String format)
 		{
-			CultureInfo cultureInfo = new CultureInfo("en-AU");
-			DateTime MyDateTime = DateTime.ParseExact(dateString, format, cultureInfo);
-			return MyDateTime;
+			try
+			{
+				CultureInfo cultureInfo = new CultureInfo("en-US", true);
+				DateTime MyDateTime = DateTime.ParseExact(dateString, format, cultureInfo);
+				return MyDateTime;
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("Date parsing failed!");
+				Console.WriteLine("Format     : " + format);
+				Console.WriteLine("DateString : " + dateString);
+				throw e;
+			}
 		}
 
 	}

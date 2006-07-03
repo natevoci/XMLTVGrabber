@@ -10,7 +10,7 @@
 </BaseUrl>
 
 <DownloadOptions>
-   <Referer>http://tvguide.ninemsn.com.au</Referer>
+   <Referer>http://tvguide.ninemsn.com.au/search/default.asp?type=fta</Referer>
    <TimeOut>180</TimeOut>
    <RetryCount>3</RetryCount>
    <WorkingDir>pages</WorkingDir>

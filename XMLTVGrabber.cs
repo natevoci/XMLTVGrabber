@@ -73,7 +73,7 @@ namespace XMLTVGrabber
 					}
 					ie.setTimeOut(timout);
 
-					Console.WriteLine("Getting Data, try (" + tryCount + ")");
+					Console.WriteLine("Getting Data, try " + tryCount);
 					int result = ie.getData(baseURLS[x].getPageDate());
 
 					if(result == 0)
@@ -97,7 +97,7 @@ namespace XMLTVGrabber
 				}
 			}
 
-			Console.WriteLine("Found total of " + totalCount + " items.");
+			Console.WriteLine("\nFound total of " + totalCount + " items.");
 
 			XMLWriter writer = new XMLWriter(config);
 			writer.writeXMLTVFile(programs);
