@@ -19,6 +19,7 @@ namespace XMLTVGrabber
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());
+                System.Diagnostics.Debugger.Break();
 			}
 		}
 		
@@ -55,8 +56,10 @@ namespace XMLTVGrabber
 			int timout = int.Parse(timoutSetting);
 
 			// get referer is any
-			String referer = config.getOption("/XMLTVGrabber_Config/DownloadOptions/Referer");
-			Console.WriteLine("Referer option (" + referer + ")");
+            String loc = config.getOption("/XMLTVGrabber_Config/BaseUrl/Location");
+            String referer = config.getOption("/XMLTVGrabber_Config/DownloadOptions/Referer");
+            Console.WriteLine("Referer option (" + referer + ")");
+            referer = referer.Replace("(LOCATION)", loc);
 			String header = "";
 			if(referer.Length > 0)
 				header = "Referer: " + referer;
@@ -118,6 +121,7 @@ namespace XMLTVGrabber
 						StreamReader sr = new StreamReader(filename);
                         baseURLS[x].resetPageData();
 						baseURLS[x].getPageData().Append(sr.ReadToEnd());
+                        sr.Close();
 
 						found = parser.parsePage(baseURLS[x], programs);
 					}

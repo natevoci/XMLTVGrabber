@@ -87,8 +87,13 @@ namespace XMLTVGrabber
 		{
 			SortedList hashes = new SortedList();
 
+            String loc = config.getOption("/XMLTVGrabber_Config/BaseUrl/Location");
+
+            String defaultSearchPage = config.getOption("/XMLTVGrabber_Config/BaseUrl/DefaultSearchPage");
+            defaultSearchPage = defaultSearchPage.Replace("(LOCATION)", loc);
+
 			IEWrapper ie = new IEWrapper();
-			ie.setURL("http://tvguide.ninemsn.com.au/search/default.asp");
+            ie.setURL(defaultSearchPage);
 			StringBuilder buff = new StringBuilder();
 			ie.setTimeOut(120);
 			int wsLoadResult = ie.getData(buff);

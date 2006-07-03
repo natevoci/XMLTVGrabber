@@ -51,3 +51,8 @@ Version (1.2.1.3046)
 - Added OutputFile option to config.xml
 - Added try catch block around everything to make sure all exceptions get written to the console.
 
+Version (1.2.2.2900)
+
+- Added option to config.xml to specify the default search page.
+- Added the ability to use (LOCATION) in the default search page and the referer.
+- Fixed a bug of not closing a file handles.
