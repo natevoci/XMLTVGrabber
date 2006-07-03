@@ -20,7 +20,7 @@ namespace XMLTVGrabber
 			}
 			catch(Exception e)
 			{
-				Console.WriteLine("Config File Load Error: \n\n" + e.ToString());
+				Console.WriteLine("Config File Load Error: " + name + "\n\n" + e.ToString());
 				System.Environment.Exit(-1);
 			}
 		}
@@ -45,7 +45,7 @@ namespace XMLTVGrabber
 			}
 			catch(Exception e)
 			{
-				Console.WriteLine("Config Option not found: \n\n" + e.ToString());
+				Console.WriteLine("Config Option not found: " + option + "\n\n" + e.ToString());
 				System.Environment.Exit(-1);
 			}
 
@@ -86,7 +86,7 @@ namespace XMLTVGrabber
 			}
 			catch(Exception e)
 			{
-				Console.WriteLine("Config Option error: \n\n" + e.ToString());
+				Console.WriteLine("Config Option error: " + option + "\n\n" + e.ToString());
 				System.Environment.Exit(-1);
 			}
 

@@ -11,8 +11,15 @@ namespace XMLTVGrabber
 		[STAThread]
 		static void Main(string[] args)
 		{
-			XMLTVGrabber runner = new XMLTVGrabber();
-			runner.run();
+			try
+			{
+				XMLTVGrabber runner = new XMLTVGrabber();
+				runner.run();
+			} 
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+			}
 		}
 		
 		public XMLTVGrabber()
@@ -64,31 +71,45 @@ namespace XMLTVGrabber
 			for(int x = 0; x < baseURLS.Length; x++)
 			{
 				Console.WriteLine("");
-				Console.WriteLine("(" + (x+1) + " of " + baseURLS.Length + ") " + baseURLS[x].URL);
 
 				bool gotData = false;
-				for(int tryCount = 0; tryCount < retryCount && !gotData; tryCount++)
+				if (baseURLS[x].URL.Length > 0)
 				{
-					IEWrapper ie = new IEWrapper();
-					ie.setURL(baseURLS[x].URL);
-					if(header.Length > 0)
+					Console.WriteLine("(" + (x+1) + " of " + baseURLS.Length + ") " + baseURLS[x].URL);
+
+					for(int tryCount = 0; tryCount < retryCount && !gotData; tryCount++)
 					{
-						Console.WriteLine("Setting IE request HEADER (" + header + ")");
-						ie.setHeaders(header);
+						IEWrapper ie = new IEWrapper();
+						ie.setURL(baseURLS[x].URL);
+						if(header.Length > 0)
+						{
+							Console.WriteLine("Setting IE request HEADER (" + header + ")");
+							ie.setHeaders(header);
+						}
+						ie.setTimeOut(timout);
+
+						Console.WriteLine("Getting Data, try (" + tryCount + ")");
+						int result = ie.getData(baseURLS[x].getPageData());
+
+						if(result == 0)
+							gotData = true;
 					}
-					ie.setTimeOut(timout);
+				}
+				else
+				{
+					Console.WriteLine("(" + (x+1) + " of " + baseURLS.Length + ") No Hash found for " + baseURLS[x].Date.ToShortDateString());
+				}
 
-					Console.WriteLine("Getting Data, try (" + tryCount + ")");
-					int result = ie.getData(baseURLS[x].getPageData());
-
-					if(result == 0)
-						gotData = true;
+				int found = 0;
+				if (gotData == true)
+				{
+					found = parser.parsePage(baseURLS[x], programs);
 				}
 
                 String filename = workingDir + "\\" + baseURLS[x].Date.ToString("yyyy-MM-dd") + " - Url " + baseURLS[x].PageId.ToString() + ".html";
                 
                 // if we still do not have the data
-				if(gotData == false)
+				if ((gotData == false) || (found <= 0))
 				{
                     // try for a cached file
 					if (File.Exists(filename))
@@ -97,21 +118,21 @@ namespace XMLTVGrabber
 						StreamReader sr = new StreamReader(filename);
                         baseURLS[x].resetPageData();
 						baseURLS[x].getPageData().Append(sr.ReadToEnd());
+
+						found = parser.parsePage(baseURLS[x], programs);
 					}
-                    // otherwise exit
+                    // otherwise move on to next url
 					else
 					{
-						Console.WriteLine("No Data after " + retryCount + " tries so exiting");
-						System.Environment.Exit(-1);
-						return;
+						Console.WriteLine("No cache file found.");
+						continue;
 					}
 				}
 
-				int found = parser.parsePage(baseURLS[x], programs);
 				totalCount += found;
 				Console.WriteLine("Found and Added (" + found + ") programs.");
 
-				if ((found > 0) && gotData)
+				if ((found > 0) && (gotData == true))
 					baseURLS[x].dumpPageData(filename);
 			}
 

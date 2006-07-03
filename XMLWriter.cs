@@ -45,7 +45,10 @@ namespace XMLTVGrabber
 				count++;
 			}
 
-			FileStream fsxml = new FileStream(outDir + "\\xmltv.xml", FileMode.Create, FileAccess.ReadWrite);
+			String outFile = config.getOption("/XMLTVGrabber_Config/XMLCreation/OutputFile");
+			Console.WriteLine("Saving to file (" + outFile + ")");
+
+			FileStream fsxml = new FileStream(outDir + "\\" + outFile, FileMode.Create, FileAccess.ReadWrite);
 			doc.Save(fsxml);
             fsxml.Close();
 

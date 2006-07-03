@@ -43,3 +43,11 @@ Version (1.2.0.24421)
 - Added regex to search for dates only in the correct FORM of the page. (nate)
 - Fix so that config.xml is read from the same directory as the .exe rather than the current path (nate)
 
+Version (1.2.1.3046)
+
+- Made cached files get used if the downloaded page doesn't contain any programs
+- Changed getDates to return all the dates in the range (offset to offset+numberOfDays).
+  If no hash is found for a date then the url is left blank. This allows cached pages to be used if they exist.
+- Added OutputFile option to config.xml
+- Added try catch block around everything to make sure all exceptions get written to the console.
+

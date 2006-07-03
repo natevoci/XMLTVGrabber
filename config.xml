@@ -40,6 +40,7 @@ D = Desription
 
 <XMLCreation>
    <OutputDir>output</OutputDir>
+   <OutputFile>xmltv.xml</OutputFile>
    <TimeZone>AUTO</TimeZone>
 </XMLCreation>
 
