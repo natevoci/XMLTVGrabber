@@ -5,7 +5,7 @@ namespace XMLTVGrabber
 
 	public class DateHolder
 	{
-		public String dateString = "";
+		public DateTime dateValue;
 		public String dateHASH = "";
 
 		public DateHolder()

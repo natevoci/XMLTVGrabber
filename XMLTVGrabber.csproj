@@ -130,6 +130,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "config.xml"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "ConfigLoader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -153,6 +157,10 @@
                     RelPath = "ProgramInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ReadMe.txt"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "XMLTVGrabber.cs"

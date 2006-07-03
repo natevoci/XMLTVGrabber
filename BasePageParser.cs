@@ -17,12 +17,12 @@ namespace XMLTVGrabber
 
 		public int parsePage(BaseUrlContainer baseURL, ArrayList programs)
 		{
-			if(baseURL.getPageDate().Length == 0)
+			if(baseURL.getPageData().Length == 0)
 				return 0;
 
 			int count = 0;
 
-			String basePageData = baseURL.getPageDate().ToString();
+			String basePageData = baseURL.getPageData().ToString();
 			basePageData = basePageData.Replace("\r\n", "");
 			basePageData = basePageData.Replace("\n", "");
 
@@ -77,7 +77,8 @@ namespace XMLTVGrabber
 						}
 						else if(actionChar == "T")
 						{
-							info.startTime = parseStartDate(baseURL.getDate() + " " + groupItemData, baseItemTimeFormat);
+                            DateTime time = DateTime.ParseExact(groupItemData, baseItemTimeFormat, CultureInfo.InvariantCulture);
+                            info.startTime = baseURL.Date.AddHours(time.Hour).AddMinutes(time.Minute);
 						}
 						else if(actionChar == "C")
 						{
@@ -111,13 +112,6 @@ namespace XMLTVGrabber
 
 
 			return count;
-		}
-
-		private DateTime parseStartDate(String dateString, String format)
-		{
-			CultureInfo cultureInfo = new CultureInfo("en-AU");
-			DateTime MyDateTime = DateTime.ParseExact(dateString, format, cultureInfo);
-			return MyDateTime;
 		}
 
 	}

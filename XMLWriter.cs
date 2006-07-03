@@ -47,6 +47,7 @@ namespace XMLTVGrabber
 
 			FileStream fsxml = new FileStream(outDir + "\\xmltv.xml", FileMode.Create, FileAccess.ReadWrite);
 			doc.Save(fsxml);
+            fsxml.Close();
 
 			return count;
 		}

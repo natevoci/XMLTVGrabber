@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Globalization;
 
 namespace XMLTVGrabber
 {
@@ -37,8 +38,9 @@ namespace XMLTVGrabber
 					baseURL02 = baseURL02.Replace("(DATESTRING)", dates[y].dateHASH);
 
 					BaseUrlContainer urlContainer = new BaseUrlContainer();
-					urlContainer.setURL(baseURL02);
-					urlContainer.setDate(dates[y].dateString);
+					urlContainer.URL = baseURL02;
+					urlContainer.Date = dates[y].dateValue;
+                    urlContainer.PageId = x;
 					constructedURLS.Add(urlContainer);
 				}
 			}
@@ -55,36 +57,78 @@ namespace XMLTVGrabber
 			int wsLoadResult = ie.getData(buff);
 			//Console.WriteLine(buff.ToString());
 
-			String dateFormatRegRx = config.getOption("/XMLTVGrabber_Config/BaseUrl/DateFormateRegEx");
-			Console.WriteLine("Date RegEx: " + dateFormatRegRx);
+			String formAction = config.getOption("/XMLTVGrabber_Config/BaseUrl/FormAction");
 
-			ArrayList dateList = new ArrayList();
+            String formTagRegex = "<form";
 
-			Regex exp = new Regex(dateFormatRegRx, RegexOptions.IgnoreCase);
-			MatchCollection matchList = exp.Matches(buff.ToString());
+            // find any number of key=value pairs
+			formTagRegex += "(?: \\w+=(?:\"[^\"]*\"|[^\\s>]+))*?";
 
-			for(int x = 0; x < matchList.Count; x++)
-			{
-				Match match = matchList[x];
-				ProgramInfo info = new ProgramInfo();
+            // find the action= tag that matches the formAction value
+            formTagRegex += " action=(?:" + formAction + "|\"" + formAction + "\")";
 
-				//Console.WriteLine("MATCH = " + match.Value);
-				//Console.WriteLine("GROUP COUNT = " + match.Groups.Count);
+            // find any number of key=value pairs
+            formTagRegex += "(?: \\w+=(?:\"[^\"]*\"|[^\\s>]+))*?";
 
-				if(match.Groups.Count == 3)
-				{
-					DateHolder holder = new DateHolder();
+            // include all the text within the form tag in a group
+            formTagRegex += ">(.*?)</form>";
+			Console.WriteLine("Form RegEx: " + formTagRegex);
 
-					Group group = match.Groups[1];
-					holder.dateHASH = group.Value;
+			Regex formRegEx = new Regex(formTagRegex, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+			Match formMatch = formRegEx.Match(buff.ToString());
 
-					group = match.Groups[2];
-					holder.dateString = group.Value;
+            ArrayList dateList = new ArrayList();
 
-					if(holderContainsDate(dateList, holder) == false)
-						dateList.Add(holder);
-				}
-			}
+            if ((formMatch != null) && (formMatch.Groups.Count > 1))
+            {
+                String text = formMatch.Groups[1].Value;
+
+                String numDays = config.getOption("/XMLTVGrabber_Config/BaseUrl/NumberOfDays");
+                Console.WriteLine("Getting (" + numDays + ") of data");
+                int numberOfDays = int.Parse(numDays);
+
+                String daysOffset = config.getOption("/XMLTVGrabber_Config/BaseUrl/DaysOffset");
+                Console.WriteLine("Offsetting data grab by (" + daysOffset + ") days");
+                int offset = int.Parse(daysOffset);
+
+                DateTime startDate = DateTime.Now;
+                startDate = startDate.Subtract(startDate.TimeOfDay);
+                startDate = startDate.AddDays(offset);
+                DateTime endDate = startDate.AddDays(numberOfDays);
+
+                String dateFormatRegRx = config.getOption("/XMLTVGrabber_Config/BaseUrl/DateFormateRegEx");
+                Console.WriteLine("Date RegEx: " + dateFormatRegRx);
+
+                String dateFormat = config.getOption("/XMLTVGrabber_Config/BaseUrl/DateFormat");
+                Console.WriteLine("Date Format: " + dateFormat);
+
+                Regex exp = new Regex(dateFormatRegRx, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                MatchCollection matchList = exp.Matches(text);
+
+                for (int x = 0; x < matchList.Count; x++)
+                {
+                    Match match = matchList[x];
+
+                    //Console.WriteLine("MATCH = " + match.Value);
+                    //Console.WriteLine("GROUP COUNT = " + match.Groups.Count);
+
+                    if (match.Groups.Count == 3)
+                    {
+                        DateTime itemDate = DateTime.ParseExact(match.Groups[2].Value, dateFormat, CultureInfo.InvariantCulture);
+                        if (itemDate < startDate)
+                            continue;
+                        if (itemDate >= endDate)
+                            continue;
+                        
+                        DateHolder holder = new DateHolder();
+                        holder.dateHASH = match.Groups[1].Value;
+                        holder.dateValue = itemDate;
+
+                        if (holderContainsDate(dateList, holder) == false)
+                            dateList.Add(holder);
+                    }
+                }
+            }
 
 			return (DateHolder[])dateList.ToArray(typeof(DateHolder));
 		}

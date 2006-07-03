@@ -6,8 +6,9 @@ namespace XMLTVGrabber
 {
 	public class BaseUrlContainer
 	{
-		String date = "";
+		DateTime date;
 		String url = "";
+		int pageId = -1;
 		StringBuilder pageData = new StringBuilder();
 
 		public BaseUrlContainer()
@@ -15,24 +16,22 @@ namespace XMLTVGrabber
 
 		}
 
-		public void setDate(String pageDate)
+		public DateTime Date
 		{
-			date = pageDate;
+			get { return date; }
+			set { date = value; }
 		}
 
-		public void setURL(String pageurl)
+		public String URL
 		{
-			url = pageurl;
+			get { return url; }
+			set { url = value; }
 		}
 
-		public String getURL()
+		public int PageId
 		{
-			return url;
-		}
-
-		public String getDate()
-		{
-			return date;
+			get { return pageId; }
+			set { pageId = value; }
 		}
 
 		public void resetPageData()
@@ -40,7 +39,7 @@ namespace XMLTVGrabber
 			pageData = new StringBuilder();
 		}
 
-		public StringBuilder getPageDate()
+		public StringBuilder getPageData()
 		{
 			return pageData;
 		}
@@ -51,6 +50,7 @@ namespace XMLTVGrabber
 			StreamWriter sw = new StreamWriter(file);
 			sw.Write(pageData.ToString());
 			sw.Close();
+            file.Close();
 		}
 	}
 }

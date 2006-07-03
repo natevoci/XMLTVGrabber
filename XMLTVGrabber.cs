@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Collections;
 using System.IO;
+using System.Globalization;
 
 namespace XMLTVGrabber
 {
@@ -21,7 +22,10 @@ namespace XMLTVGrabber
 
 		public void run()
 		{
-			ConfigLoader config = new ConfigLoader("config.xml");
+			string commandPath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+			commandPath = commandPath.Substring(0, commandPath.LastIndexOf("\\") + 1);
+			
+			ConfigLoader config = new ConfigLoader(commandPath + "config.xml");
 			BasePageParser parser = new BasePageParser(config);
 			
 			ArrayList programs = new ArrayList();
@@ -32,6 +36,7 @@ namespace XMLTVGrabber
 
 			// get download working dir
 			String workingDir = config.getOption("/XMLTVGrabber_Config/DownloadOptions/WorkingDir");
+            workingDir = workingDir.TrimEnd('\\');
 			Console.WriteLine("Working Directory (" + workingDir + ")");
 			DirectoryInfo workingDirTest = new DirectoryInfo(workingDir);
 			if(workingDirTest.Exists == false)
@@ -59,13 +64,13 @@ namespace XMLTVGrabber
 			for(int x = 0; x < baseURLS.Length; x++)
 			{
 				Console.WriteLine("");
-				Console.WriteLine("(" + x + " of " + baseURLS.Length + ") " + baseURLS[x].getURL());
+				Console.WriteLine("(" + (x+1) + " of " + baseURLS.Length + ") " + baseURLS[x].URL);
 
 				bool gotData = false;
 				for(int tryCount = 0; tryCount < retryCount && !gotData; tryCount++)
 				{
 					IEWrapper ie = new IEWrapper();
-					ie.setURL(baseURLS[x].getURL());
+					ie.setURL(baseURLS[x].URL);
 					if(header.Length > 0)
 					{
 						Console.WriteLine("Setting IE request HEADER (" + header + ")");
@@ -74,27 +79,40 @@ namespace XMLTVGrabber
 					ie.setTimeOut(timout);
 
 					Console.WriteLine("Getting Data, try (" + tryCount + ")");
-					int result = ie.getData(baseURLS[x].getPageDate());
+					int result = ie.getData(baseURLS[x].getPageData());
 
 					if(result == 0)
-					{
-						baseURLS[x].dumpPageData(workingDir + "\\pageDump" + x + ".html");
+						gotData = true;
+				}
 
-						int found = parser.parsePage(baseURLS[x], programs);
-						totalCount += found;
-						Console.WriteLine("Found and Added (" + found + ") programs.");
-						if(found > 0)
-							gotData = true;
+                String filename = workingDir + "\\" + baseURLS[x].Date.ToString("yyyy-MM-dd") + " - Url " + baseURLS[x].PageId.ToString() + ".html";
+                
+                // if we still do not have the data
+				if(gotData == false)
+				{
+                    // try for a cached file
+					if (File.Exists(filename))
+					{
+                        Console.WriteLine("Reading data from cached file \"" + filename + "\"");
+						StreamReader sr = new StreamReader(filename);
+                        baseURLS[x].resetPageData();
+						baseURLS[x].getPageData().Append(sr.ReadToEnd());
+					}
+                    // otherwise exit
+					else
+					{
+						Console.WriteLine("No Data after " + retryCount + " tries so exiting");
+						System.Environment.Exit(-1);
+						return;
 					}
 				}
 
-				// if we still do not have the data then exit
-				if(gotData == false)
-				{
-					Console.WriteLine("No Data after " + retryCount + " tries so exiting");
-					System.Environment.Exit(-1);
-					break;
-				}
+				int found = parser.parsePage(baseURLS[x], programs);
+				totalCount += found;
+				Console.WriteLine("Found and Added (" + found + ") programs.");
+
+				if ((found > 0) && gotData)
+					baseURLS[x].dumpPageData(filename);
 			}
 
 			Console.WriteLine("Found total of " + totalCount + " items.");
@@ -121,6 +139,35 @@ namespace XMLTVGrabber
 
 				Console.WriteLine("WS reloaded with result : " + wsLoadResult);
 			}
+
+            //
+            // Clean up old cached pages
+            //
+            Console.WriteLine("Cleaning up old cache files");
+
+            String daysOffset = config.getOption("/XMLTVGrabber_Config/BaseUrl/DaysOffset");
+            int offset = int.Parse(daysOffset);
+
+            string[] files = Directory.GetFiles(workingDir);
+            foreach (string filename in files)
+            {
+                if (!filename.StartsWith(workingDir))
+                    continue;
+                string file = filename.Substring(workingDir.Length).TrimStart('\\');
+
+                int index = file.IndexOf(" - ");
+                if (index < 0)
+                    continue;
+                string dateString = file.Substring(0, index);
+
+                DateTime fileDate = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                DateTime compareDate = DateTime.Now.AddDays((offset < 0) ? offset - 1 : -1);
+                if (fileDate < compareDate)
+                {
+                    Console.WriteLine("  Deleting " + file);
+                    File.Delete(file);
+                }
+            }
 		}
 
 	}
