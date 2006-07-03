@@ -91,6 +91,16 @@
                     AssemblyName = "System.Web"
                     HintPath = "..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
                 />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                />
+                <Reference
+                    Name = "AxSHDocVw"
+                    AssemblyName = "AxSHDocVw"
+                    HintPath = "AxSHDocVw.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -121,6 +131,11 @@
                 />
                 <File
                     RelPath = "ConfigLoader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IEForm.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

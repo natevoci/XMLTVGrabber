@@ -48,73 +48,26 @@ namespace XMLTVGrabber
 
 			try
 			{
-				Type IETipo = Type.GetTypeFromProgID("InternetExplorer.Application");
+				IEForm form = new IEForm(url, headers, timeout);
+				System.Windows.Forms.DialogResult result = form.ShowDialog();
 
-				object IEX = Activator.CreateInstance(IETipo);
-
-				IETipo.InvokeMember("Visible",
-					System.Reflection.BindingFlags.SetProperty, null, IEX, new object [] { false });
-
-				IETipo.InvokeMember("Silent",
-					System.Reflection.BindingFlags.SetProperty, null, IEX, new object [] { true });
-
-/*
-    navOpenInNewWindow = 0x1,
-    navNoHistory = 0x2,
-    navNoReadFromCache = 0x4,
-    navNoWriteToCache = 0x8,
-    navAllowAutosearch = 0x10,
-    navBrowserBar = 0x20,
-    navHyperlink = 0x40,
-    navEnforceRestricted = 0x80,
-    navNewWindowsManaged = 0x0100,
-    navUntrustedForDownload = 0x0200,
-    navTrustedForActiveX = 0x0400,
-    navOpenInNewTab = 0x0800,
-    navOpenBackgroundTab = 0x1000,
-    navKeepWordWheelText = 0x2000
-*/
-
-
-				object[] funcParams = new object[5];
-				funcParams[0] = url;
-				funcParams[1] = 0x4 | 0x8 | 0x2;// | 0x1;
-				funcParams[2] = 0;
-				funcParams[3] = 0;//postData; // for now just use GET request
-				funcParams[4] = headers;
-
-				IETipo.InvokeMember("Navigate",
-					System.Reflection.BindingFlags.InvokeMethod, null, IEX, funcParams);
-
-				int counter = 0;
-				timoutHappened = false;
-
-				while(getIEState(IETipo, IEX) != 4)
+				if (result == System.Windows.Forms.DialogResult.Retry)
 				{
-					Console.Write(".");
-					//Console.WriteLine("waiting (" + counter++ + ") ...");
-					if(counter > timeout)
-					{
-						
-						Console.WriteLine("Download Timed OUT!!");
-						timoutHappened = true;
-						break;
-					}
-					Thread.Sleep(1000);
+					Console.WriteLine("Error getting Data: Timeout");
+					return -2;
 				}
-				Console.WriteLine("");
+				else if (result == System.Windows.Forms.DialogResult.Cancel)
+				{
+					Console.WriteLine("Error getting Data: IEForm was unexpected closed");
+					return -4;
+				}
+				else if (result != System.Windows.Forms.DialogResult.OK)
+				{
+					Console.WriteLine("Error getting Data: Unknown");
+					return -5;
+				}
 
-				HTMLDocument myDoc = (HTMLDocument)IETipo.InvokeMember("Document",
-					System.Reflection.BindingFlags.GetProperty, null, IEX, null);
-				String pageData = myDoc.documentElement.outerHTML;
-
-				IETipo.InvokeMember("Quit",
-					System.Reflection.BindingFlags.InvokeMethod, null, IEX, new object [] {  });
-
-				IEX = null;
-				IETipo = null;
-
-				data.Append(pageData);
+				data.Append(form.DocumentText);
 			}
 			catch(Exception e)
 			{
@@ -126,12 +79,6 @@ namespace XMLTVGrabber
 				return -2;
 
 			return 0;
-		}
-
-		private int getIEState(Type ieType, object ie)
-		{
-			return (int)ieType.InvokeMember("ReadyState",
-				System.Reflection.BindingFlags.GetProperty, null, ie, null);
 		}
 	}
 }
