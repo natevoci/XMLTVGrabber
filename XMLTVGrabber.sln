@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMLTVGrabber", "XMLTVGrabber.csproj", "{ED29C0AC-880A-4449-A0C7-B99E367BCF2A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{ED29C0AC-880A-4449-A0C7-B99E367BCF2A}.Debug.ActiveCfg = Debug|.NET
+		{ED29C0AC-880A-4449-A0C7-B99E367BCF2A}.Debug.Build.0 = Debug|.NET
+		{ED29C0AC-880A-4449-A0C7-B99E367BCF2A}.Release.ActiveCfg = Release|.NET
+		{ED29C0AC-880A-4449-A0C7-B99E367BCF2A}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
