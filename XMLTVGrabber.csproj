@@ -135,8 +135,13 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "IEForm.cs"
+                    RelPath = "DateHolder.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IEForm.cs"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
