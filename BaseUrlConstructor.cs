@@ -1,5 +1,6 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Text;
 
@@ -15,91 +16,113 @@ namespace XMLTVGrabber
 			config = conf;
 		}
 
-		public BaseUrlContainer[] getBaseURLS()
+		public List<BaseUrlContainer> getBaseURLS()
 		{
 			String loc = config.getOption("/XMLTVGrabber_Config/BaseUrl/Location");
-			Console.WriteLine("Getting data for location (" + loc + ")");
+			Console.WriteLine("Constructing URLs for location (" + loc + ")");
 			
-			DateHolder[] dates = getDates();
+			List<DateTime> dates = getDates();
 
 			String[] baseUrlList = config.getOptionList("/XMLTVGrabber_Config/BaseUrl/URL");
 
-			ArrayList constructedURLS = new ArrayList();
+            String dateFormat = config.getOption("/XMLTVGrabber_Config/BaseUrl/DateFormat");
+
+            List<BaseUrlContainer> constructedURLS = new List<BaseUrlContainer>();
 
 			for(int x = 0; x < baseUrlList.Length; x++)
 			{
 				String baseURL01 = baseUrlList[x];
 				baseURL01 = baseURL01.Replace("(LOCATION)", loc);
 
-				for(int y = 0; y < dates.Length; y++)
+				for(int y = 0; y < dates.Count; y++)
 				{
 					String baseURL02 = baseURL01;
-					baseURL02 = baseURL02.Replace("(DATESTRING)", dates[y].dateHASH);
+					baseURL02 = baseURL02.Replace("(DATESTRING)", dates[y].ToString(dateFormat));
 
 					BaseUrlContainer urlContainer = new BaseUrlContainer();
 					urlContainer.setURL(baseURL02);
-					urlContainer.setDate(dates[y].dateString);
+
+                    urlContainer.Date = dates[y];
+
 					constructedURLS.Add(urlContainer);
+
+                    Console.WriteLine("  URL: " + baseURL02);
 				}
 			}
 
-			return (BaseUrlContainer[])constructedURLS.ToArray(typeof(BaseUrlContainer));
+			return constructedURLS;
 		}
 
-		private DateHolder[] getDates()
-		{
-			IEWrapper ie = new IEWrapper();
-			ie.setURL("http://tvguide.ninemsn.com.au/search/default.asp");
-			StringBuilder buff = new StringBuilder();
-			ie.setTimeOut(120);
-			int wsLoadResult = ie.getData(buff);
-			//Console.WriteLine(buff.ToString());
+        private List<DateTime> getDates()
+        {
+            DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
-			String dateFormatRegRx = config.getOption("/XMLTVGrabber_Config/BaseUrl/DateFormateRegEx");
-			Console.WriteLine("Date RegEx: " + dateFormatRegRx);
+            int days = Int32.Parse(config.getOption("/XMLTVGrabber_Config/BaseUrl/Days"));
 
-			ArrayList dateList = new ArrayList();
+            List<DateTime> dates = new List<DateTime>();
+            for (int i = 0; i < days; i++)
+            {
+                dates.Add(date);
+                date = date.AddDays(1.0);
+            }
 
-			Regex exp = new Regex(dateFormatRegRx, RegexOptions.IgnoreCase);
-			MatchCollection matchList = exp.Matches(buff.ToString());
+            return dates;
+        }
 
-			for(int x = 0; x < matchList.Count; x++)
-			{
-				Match match = matchList[x];
-				ProgramInfo info = new ProgramInfo();
+        //private DateHolder[] getDates()
+        //{
+        //    IEWrapper ie = new IEWrapper();
+        //    ie.setURL("http://tvguide.ninemsn.com.au/search/default.asp");
+        //    StringBuilder buff = new StringBuilder();
+        //    ie.setTimeOut(120);
+        //    int wsLoadResult = ie.getData(buff);
+        //    //Console.WriteLine(buff.ToString());
 
-				//Console.WriteLine("MATCH = " + match.Value);
-				//Console.WriteLine("GROUP COUNT = " + match.Groups.Count);
+        //    String dateFormatRegRx = config.getOption("/XMLTVGrabber_Config/BaseUrl/DateFormateRegEx");
+        //    Console.WriteLine("Date RegEx: " + dateFormatRegRx);
 
-				if(match.Groups.Count == 3)
-				{
-					DateHolder holder = new DateHolder();
+        //    ArrayList dateList = new ArrayList();
 
-					Group group = match.Groups[1];
-					holder.dateHASH = group.Value;
+        //    Regex exp = new Regex(dateFormatRegRx, RegexOptions.IgnoreCase);
+        //    MatchCollection matchList = exp.Matches(buff.ToString());
 
-					group = match.Groups[2];
-					holder.dateString = group.Value;
+        //    for(int x = 0; x < matchList.Count; x++)
+        //    {
+        //        Match match = matchList[x];
+        //        ProgramInfo info = new ProgramInfo();
 
-					if(holderContainsDate(dateList, holder) == false)
-						dateList.Add(holder);
-				}
-			}
+        //        //Console.WriteLine("MATCH = " + match.Value);
+        //        //Console.WriteLine("GROUP COUNT = " + match.Groups.Count);
 
-			return (DateHolder[])dateList.ToArray(typeof(DateHolder));
-		}
+        //        if(match.Groups.Count == 3)
+        //        {
+        //            DateHolder holder = new DateHolder();
 
-		bool holderContainsDate(ArrayList dateList, DateHolder holder)
-		{
-			IEnumerator emun = dateList.GetEnumerator();
+        //            Group group = match.Groups[1];
+        //            holder.dateHASH = group.Value;
 
-			while(emun.MoveNext())
-			{
-				if(((DateHolder)emun.Current).dateHASH == holder.dateHASH)
-					return true;
-			}
+        //            group = match.Groups[2];
+        //            holder.dateString = group.Value;
 
-			return false;
-		}
+        //            if(holderContainsDate(dateList, holder) == false)
+        //                dateList.Add(holder);
+        //        }
+        //    }
+
+        //    return (DateHolder[])dateList.ToArray(typeof(DateHolder));
+        //}
+
+        //bool holderContainsDate(ArrayList dateList, DateHolder holder)
+        //{
+        //    IEnumerator emun = dateList.GetEnumerator();
+
+        //    while(emun.MoveNext())
+        //    {
+        //        if(((DateHolder)emun.Current).dateHASH == holder.dateHASH)
+        //            return true;
+        //    }
+
+        //    return false;
+        //}
 	}
 }

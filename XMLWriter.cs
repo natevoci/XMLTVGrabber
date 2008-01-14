@@ -1,7 +1,7 @@
 using System;
 using System.Xml;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace XMLTVGrabber
 {
@@ -15,18 +15,18 @@ namespace XMLTVGrabber
 			config = conf;
 		}
 
-		public int writeXMLTVFile(ArrayList programs)
+        public int writeXMLTVFile(List<ProgramInfo> programs)
 		{
 			int count = 0;
 
 			String zone = config.getOption("/XMLTVGrabber_Config/XMLCreation/TimeZone");
 			Console.WriteLine("Using Time Zone (" + zone + ")");
 
-			String outDir = config.getOption("/XMLTVGrabber_Config/XMLCreation/OutputDir");
-			Console.WriteLine("Saving to (" + outDir + ")");
-			DirectoryInfo dirTest = new DirectoryInfo(outDir);
-			if(dirTest.Exists == false)
-				dirTest.Create();
+			String outFile = config.getOption("/XMLTVGrabber_Config/XMLCreation/OutputFile");
+			Console.WriteLine("Saving to (" + outFile + ")");
+			FileInfo fi = new FileInfo(outFile);
+			if(fi.Directory.Exists == false)
+				fi.Directory.Create();
 
 			XmlDocument doc = new XmlDocument();
 
@@ -36,42 +36,33 @@ namespace XMLTVGrabber
 			// add channels
 			addChannels(programs, doc, el);
 
-			IEnumerator it = programs.GetEnumerator();
-
-			while(it.MoveNext())
+            foreach (ProgramInfo info in programs)
 			{
-				ProgramInfo info = (ProgramInfo)it.Current;
 				info.addToXML(doc, el, zone);
 				count++;
 			}
 
-			FileStream fsxml = new FileStream(outDir + "\\xmltv.xml", FileMode.Create, FileAccess.ReadWrite);
+			FileStream fsxml = new FileStream(outFile, FileMode.Create, FileAccess.ReadWrite);
 			doc.Save(fsxml);
 
 			return count;
 		}
 
-		private int addChannels(ArrayList programs, XmlDocument doc, XmlElement parent)
+        private int addChannels(List<ProgramInfo> programs, XmlDocument doc, XmlElement parent)
 		{
 			int count = 0;
-			ArrayList channelList = new ArrayList();
+            List<string> channelList = new List<string>();
 
-			IEnumerator it = programs.GetEnumerator();
-			while(it.MoveNext())
+            foreach (ProgramInfo info in programs)
 			{
-				ProgramInfo info = (ProgramInfo)it.Current;
-
 				if(!channelList.Contains(info.channel))
 				{
 					channelList.Add(info.channel);
 				}
 			}
 
-			it = channelList.GetEnumerator();
-			while(it.MoveNext())
+            foreach (string chan in channelList)
 			{
-				String chan = (String)it.Current;
-
 				XmlElement channel = doc.CreateElement("channel");
 				channel.SetAttribute("id", chan);
 

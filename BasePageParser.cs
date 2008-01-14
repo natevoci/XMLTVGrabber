@@ -1,7 +1,8 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Web;
 
 namespace XMLTVGrabber
 {
@@ -15,14 +16,14 @@ namespace XMLTVGrabber
 			config = conf;
 		}
 
-		public int parsePage(BaseUrlContainer baseURL, ArrayList programs)
+		public int parsePage(BaseUrlContainer baseURL, List<ProgramInfo> programs)
 		{
-			if(baseURL.getPageDate().Length == 0)
+			if(baseURL.getPageData().Length == 0)
 				return 0;
 
 			int count = 0;
 
-			String basePageData = baseURL.getPageDate().ToString();
+			String basePageData = baseURL.getPageData().ToString();
 			basePageData = basePageData.Replace("\r\n", "");
 			basePageData = basePageData.Replace("\n", "");
 
@@ -35,8 +36,7 @@ namespace XMLTVGrabber
 			String baseItemTimeFormat = config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/TimeFormat");
 			Console.WriteLine("Base Item Time Format: " + baseItemTimeFormat);
 
-			String detailsURL = config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/DetailsURL");
-			Console.WriteLine("Details URL: " + detailsURL);
+            String channelId = config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/ChannelID");
 
 			Regex exp = new Regex(@baseItemRegEx, RegexOptions.IgnoreCase);
 
@@ -47,13 +47,14 @@ namespace XMLTVGrabber
 				Match match = matchList[x];
 				
 				ProgramInfo info = new ProgramInfo();
+                info.channel = HttpUtility.HtmlDecode(channelId);
 
 				//Console.WriteLine(match.Value);
 
 				for (int i = 1; i < match.Groups.Count; i++)
 				{
 					Group group = match.Groups[i];
-					String groupItemData = group.Value;
+					String groupItemData = group.Value.Trim();
 
 					if(baseItemMatchOrder.Length >= i)
 					{
@@ -64,30 +65,36 @@ namespace XMLTVGrabber
 						I = prog ID
 						T = Time
 						C = Channel Name
-						N = Program Name
+						N = Program Name (Title)
+                        S = Subtitle
 						L = Duration
 						R = Rating
 						D = Desription
+                        G = Category / Genre
+                        . = Ignore
 						*/
 
 						if(actionChar == "I")
 						{
 							info.progID = groupItemData;
-							info.detailsURL = detailsURL.Replace("(PID)", groupItemData);
 						}
 						else if(actionChar == "T")
 						{
-							info.startTime = parseStartDate(baseURL.getDate() + " " + groupItemData, baseItemTimeFormat);
+							info.startTime = parseStartDate(baseURL.Date.ToString("dd/MM/yyyy") + " " + groupItemData, "dd/MM/yyyy " + baseItemTimeFormat);
 						}
 						else if(actionChar == "C")
 						{
-							info.channel = groupItemData;
+							info.channel = HttpUtility.HtmlDecode(groupItemData);
 						}
 						else if(actionChar == "N")
 						{
-							info.title = groupItemData;
+							info.title = HttpUtility.HtmlDecode(groupItemData);
 						}
-						else if(actionChar == "L")
+                        else if (actionChar == "S")
+                        {
+                            info.subtitle = HttpUtility.HtmlDecode(groupItemData);
+                        }
+                        else if (actionChar == "L")
 						{
 							info.duration = int.Parse(groupItemData);
 						}
@@ -97,9 +104,13 @@ namespace XMLTVGrabber
 						}
 						else if(actionChar == "D")
 						{
-							info.description = groupItemData;
-						}
-					}
+							info.description = HttpUtility.HtmlDecode(groupItemData);
+                        }
+                        else if(actionChar == "G")
+                        {
+                            info.category = groupItemData;
+                        }
+                    }
 				}
 
 				//Console.WriteLine(info.toString());

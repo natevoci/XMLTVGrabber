@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace XMLTVGrabber
@@ -23,12 +23,12 @@ namespace XMLTVGrabber
 		{
 			ConfigLoader config = new ConfigLoader("config.xml");
 			BasePageParser parser = new BasePageParser(config);
-			
-			ArrayList programs = new ArrayList();
+
+            List<ProgramInfo> programs = new List<ProgramInfo>();
 
 			BaseUrlConstructor urlConstruct = new BaseUrlConstructor(config);
 
-			BaseUrlContainer[] baseURLS = urlConstruct.getBaseURLS();
+			List<BaseUrlContainer> baseURLS = urlConstruct.getBaseURLS();
 
 			// get download working dir
 			String workingDir = config.getOption("/XMLTVGrabber_Config/DownloadOptions/WorkingDir");
@@ -56,37 +56,54 @@ namespace XMLTVGrabber
 
 			int totalCount = 0;
 
-			for(int x = 0; x < baseURLS.Length; x++)
+			for(int x = 0; x < baseURLS.Count; x++)
 			{
 				Console.WriteLine("");
-				Console.WriteLine("(" + x + " of " + baseURLS.Length + ") " + baseURLS[x].getURL());
+				Console.WriteLine("(" + (x+1) + " of " + baseURLS.Count + ") " + baseURLS[x].getURL());
 
 				bool gotData = false;
 				for(int tryCount = 0; tryCount < retryCount && !gotData; tryCount++)
 				{
-					IEWrapper ie = new IEWrapper();
-					ie.setURL(baseURLS[x].getURL());
-					if(header.Length > 0)
-					{
-						Console.WriteLine("Setting IE request HEADER (" + header + ")");
-						ie.setHeaders(header);
-					}
-					ie.setTimeOut(timout);
+                    int result = -1;
+                    string dumpFile = workingDir + "\\pageDump" + x + ".html";
+                    FileInfo fi = new FileInfo(dumpFile);
+                    if (fi.Exists && (fi.LastWriteTime.AddHours(12.0) > DateTime.Now))
+                    {
+                        StreamReader sr = new StreamReader(dumpFile);
+                        baseURLS[x].getPageData().Append(sr.ReadToEnd());
+                        sr.Close();
+                        result = 0;
+                    }
+                    else
+                    {
+                        IEWrapper ie = new IEWrapper();
+                        ie.setURL(baseURLS[x].getURL());
+                        if (header.Length > 0)
+                        {
+                            Console.WriteLine("Setting IE request HEADER (" + header + ")");
+                            ie.setHeaders(header);
+                        }
+                        ie.setTimeOut(timout);
 
-					Console.WriteLine("Getting Data, try " + tryCount);
-					int result = ie.getData(baseURLS[x].getPageDate());
+                        Console.WriteLine("Getting Data, try " + tryCount);
+                        result = ie.getData(baseURLS[x].getPageData());
 
-					if(result == 0)
-					{
-						baseURLS[x].dumpPageData(workingDir + "\\pageDump" + x + ".html");
+                        if (result == 0)
+                        {
+                            baseURLS[x].dumpPageData(dumpFile);
 
-						int found = parser.parsePage(baseURLS[x], programs);
-						totalCount += found;
-						Console.WriteLine("Found and Added (" + found + ") programs.");
-						if(found > 0)
-							gotData = true;
-					}
-				}
+                        }
+                    }
+
+                    if (result == 0)
+                    {
+                        int found = parser.parsePage(baseURLS[x], programs);
+                        totalCount += found;
+                        Console.WriteLine("Found and Added (" + found + ") programs.");
+                        if (found > 0)
+                            gotData = true;
+                    }
+                }
 
 				// if we still do not have the data then exit
 				if(gotData == false)
@@ -98,6 +115,8 @@ namespace XMLTVGrabber
 			}
 
 			Console.WriteLine("\nFound total of " + totalCount + " items.");
+
+            CheckFields(programs);
 
 			XMLWriter writer = new XMLWriter(config);
 			writer.writeXMLTVFile(programs);
@@ -123,5 +142,21 @@ namespace XMLTVGrabber
 			}
 		}
 
+
+        public void CheckFields(List<ProgramInfo> programs)
+        {
+            for (int index=0 ; index<programs.Count ; index++ )
+            {
+                ProgramInfo prog = programs[index];
+                if (prog.duration == 0)
+                {
+                    if (index+1 < programs.Count)
+                    {
+                        TimeSpan span = programs[index+1].startTime.Subtract(prog.startTime);
+                        prog.duration = (int)span.TotalMinutes;
+                    }
+                }
+            }
+        }
 	}
 }

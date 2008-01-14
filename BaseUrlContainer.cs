@@ -6,7 +6,7 @@ namespace XMLTVGrabber
 {
 	public class BaseUrlContainer
 	{
-		String date = "";
+		DateTime date = DateTime.MinValue;
 		String url = "";
 		StringBuilder pageData = new StringBuilder();
 
@@ -15,10 +15,11 @@ namespace XMLTVGrabber
 
 		}
 
-		public void setDate(String pageDate)
-		{
-			date = pageDate;
-		}
+        public DateTime Date
+        {
+            get { return date; }
+            set { date = value; }
+        }
 
 		public void setURL(String pageurl)
 		{
@@ -30,17 +31,12 @@ namespace XMLTVGrabber
 			return url;
 		}
 
-		public String getDate()
-		{
-			return date;
-		}
-
 		public void resetPageData()
 		{
 			pageData = new StringBuilder();
 		}
 
-		public StringBuilder getPageDate()
+		public StringBuilder getPageData()
 		{
 			return pageData;
 		}
