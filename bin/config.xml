@@ -11,6 +11,7 @@
     <TimeOut>180</TimeOut>
     <RetryCount>3</RetryCount>
     <WorkingDir>pages</WorkingDir>
+	<WorkingDirHoursToReuse>0</WorkingDirHoursToReuse>
   </DownloadOptions>
 
   <ParseBasePageInfo>

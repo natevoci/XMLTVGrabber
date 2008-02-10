@@ -54,6 +54,11 @@ namespace XMLTVGrabber
 			Console.WriteLine("Will retry  (" + retryCountString + ") times");
 			int retryCount = int.Parse(retryCountString);
 
+            // reuse hours count
+            String reuseHoursCountString = config.getOption("/XMLTVGrabber_Config/DownloadOptions/WorkingDirHoursToReuse");
+            Console.WriteLine("Will reuse cached pages if less than (" + retryCountString + ") hours old");
+            int reuseHoursCount = int.Parse(reuseHoursCountString);
+
 			int totalCount = 0;
 
 			for(int x = 0; x < baseURLS.Count; x++)
@@ -67,7 +72,7 @@ namespace XMLTVGrabber
                     int result = -1;
                     string dumpFile = workingDir + "\\pageDump" + x + ".html";
                     FileInfo fi = new FileInfo(dumpFile);
-                    if (fi.Exists && (fi.LastWriteTime.AddHours(12.0) > DateTime.Now))
+                    if (fi.Exists && (fi.LastWriteTime.AddHours(reuseHoursCount) > DateTime.Now))
                     {
                         StreamReader sr = new StreamReader(dumpFile);
                         baseURLS[x].getPageData().Append(sr.ReadToEnd());
