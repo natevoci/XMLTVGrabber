@@ -65,6 +65,7 @@ namespace XMLTVGrabber
             {
                 XmlElement subtitleEl = doc.CreateElement("sub-title");
                 subtitleEl.InnerText = subtitle;
+                subtitleEl.SetAttribute("lang", "en");
                 prog.AppendChild(subtitleEl);
             }
 
