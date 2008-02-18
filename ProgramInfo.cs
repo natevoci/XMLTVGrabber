@@ -57,19 +57,22 @@ namespace XMLTVGrabber
 
 			XmlElement titleEl = doc.CreateElement("title");
 			titleEl.InnerText = title;
+            titleEl.SetAttribute("lang", "en");
 			prog.AppendChild(titleEl);
 
             if (subtitle.Length > 0)
             {
                 XmlElement subtitleEl = doc.CreateElement("sub-title");
                 subtitleEl.InnerText = subtitle;
+                subtitleEl.SetAttribute("lang", "en");
                 prog.AppendChild(subtitleEl);
             }
 
 			XmlElement descEl = doc.CreateElement("desc");
             if (description.Length > 0)
 			    descEl.InnerText = description;
-			prog.AppendChild(descEl);
+            descEl.SetAttribute("lang", "en");
+            prog.AppendChild(descEl);
 
             if (category.Length > 0)
             {
