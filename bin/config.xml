@@ -1,9 +1,10 @@
 <XMLTVGrabber_Config>
   <BaseUrl>
-    <URL>http://www20.sbs.com.au/whatson/?date=(DATESTRING)&amp;channelID=(LOCATION)</URL>
+    <URL>http://www.abc.net.au/tv/guide/abctvweekguide.htm</URL>
+    <URL>http://www.abc.net.au/tv/guide/abc2weekguide.htm</URL>
     <!--<DateFormat>yyyy-MM-dd</DateFormat>-->
-    <Days>7</Days>
-    <Location>1</Location>
+    <!--<Days>7</Days>-->
+    <!--<Location>1</Location>-->
   </BaseUrl>
 
   <DownloadOptions>
@@ -11,14 +12,16 @@
     <TimeOut>180</TimeOut>
     <RetryCount>3</RetryCount>
     <WorkingDir>pages</WorkingDir>
-	<WorkingDirHoursToReuse>0</WorkingDirHoursToReuse>
+    <WorkingDirHoursToReuse>0</WorkingDirHoursToReuse>
   </DownloadOptions>
 
   <ParseBasePageInfo>
-    <ItemRegEx>&lt;TD class=programlist.*?&lt;strong&gt;([0-9]{1,2}:[0-9]{2}).*?&lt;strong&gt;(.*?)(?:(?&lt;!Movie)(?&lt;!Science): (.*?))?&lt;/strong&gt;.*?&lt;/strong&gt;--&gt;(.*?(?:(?&lt;=\([^\)]*\) )\(([^\)]*)\))?(?: \((\d\d\d\d)\))?( \(Part \d+\))?( \(Rpt\))?( (?:G|PG|M|MA))?( \(\w(?:,\w)*\))?( CC)?( WS)?\s*)&lt;!--</ItemRegEx>
-    <ItemMatchOrder>TNSDG...R...</ItemMatchOrder>
-    <TimeFormat>HH:mm</TimeFormat>
-	<ChannelID>SBS</ChannelID>
+    <DateRegEx>&lt;h2 class=.*?&gt;.*?,(.*?)&lt;/H2&gt;</DateRegEx>
+    <DateFormat>MMMM d</DateFormat>
+    <ItemRegEx>&lt;td&gt;(\d+:\d+[ap]m)&lt;/td&gt;\s*&lt;td&gt;(.*?)(?:&lt;small&gt;\((g|pg|m|ma)\)&lt;/small&gt;)?(?:&lt;BR&gt;(.*?))?&lt;/td&gt;</ItemRegEx>
+    <ItemMatchOrder>TNRD</ItemMatchOrder>
+    <TimeFormat>h:mmtt</TimeFormat>
+    <ChannelRegEx>&lt;h2&gt;(.*?) - 7 Day Guide&lt;/H2&gt;</ChannelRegEx>
   </ParseBasePageInfo>
 
 <!--

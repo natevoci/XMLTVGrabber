@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace XMLTVGrabber
@@ -10,7 +11,7 @@ namespace XMLTVGrabber
 		[STAThread]
 		static void Main(string[] args)
 		{
-			XMLTVGrabber runner = new XMLTVGrabber();
+            XMLTVGrabber runner = new XMLTVGrabber();
 			runner.run();
 		}
 		
@@ -155,10 +156,19 @@ namespace XMLTVGrabber
                 ProgramInfo prog = programs[index];
                 if (prog.duration == 0)
                 {
-                    if (index+1 < programs.Count)
+                    int offset = 1;
+                    while (index+offset < programs.Count)
                     {
-                        TimeSpan span = programs[index+1].startTime.Subtract(prog.startTime);
+                        ProgramInfo nextProg = programs[index + offset];
+                        if ((nextProg.channel != prog.channel) || (nextProg.startTime == prog.startTime))
+                        {
+                            offset++;
+                            continue;
+                        }
+
+                        TimeSpan span = nextProg.startTime.Subtract(prog.startTime);
                         prog.duration = (int)span.TotalMinutes;
+                        break;
                     }
                 }
             }

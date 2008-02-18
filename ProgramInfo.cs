@@ -25,8 +25,6 @@ namespace XMLTVGrabber
 		{
 			XmlElement prog = doc.CreateElement("programme");
 
-			prog.SetAttribute("channel", channel);
-
 			// build start time
 			String xmlTVStart = startTime.ToString("yyyyMMddHHmmss ");
 			if(zone.Length > 0 && zone != "AUTO")
@@ -53,6 +51,8 @@ namespace XMLTVGrabber
 			}
 			prog.SetAttribute("stop", xmlTVStop);
 
+            prog.SetAttribute("channel", channel);
+
 			parent.AppendChild(prog);
 
 			XmlElement titleEl = doc.CreateElement("title");
@@ -67,7 +67,8 @@ namespace XMLTVGrabber
             }
 
 			XmlElement descEl = doc.CreateElement("desc");
-			descEl.InnerText = description;
+            if (description.Length > 0)
+			    descEl.InnerText = description;
 			prog.AppendChild(descEl);
 
             if (category.Length > 0)
@@ -91,9 +92,6 @@ namespace XMLTVGrabber
 			lenEl.SetAttribute("units", "minutes");
 			lenEl.InnerText = duration.ToString();
 			prog.AppendChild(lenEl);
-
-			XmlElement catEl = doc.CreateElement("category");
-			prog.AppendChild(catEl);
 
             if (detailsURL.Length > 0)
             {

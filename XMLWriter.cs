@@ -30,7 +30,11 @@ namespace XMLTVGrabber
 
 			XmlDocument doc = new XmlDocument();
 
+            XmlDeclaration decl = doc.CreateXmlDeclaration("1.0", "ISO-8859-1", null);
+            doc.AppendChild(decl);
+
 			XmlElement el = doc.CreateElement("tv");
+            el.SetAttribute("generator-info-name", "ABCGrabber");
 			doc.AppendChild(el);
 
 			// add channels
