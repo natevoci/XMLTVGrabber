@@ -9,7 +9,7 @@ namespace XMLTVGrabber
 		DateTime date = DateTime.MinValue;
 		String url = "";
 		StringBuilder pageData = new StringBuilder();
-
+        
 		public BaseUrlContainer()
 		{
 
@@ -19,6 +19,11 @@ namespace XMLTVGrabber
         {
             get { return date; }
             set { date = value; }
+        }
+
+        public string Filename
+        {
+            get { return date.ToString("yyyy-MM-dd"); }
         }
 
 		public void setURL(String pageurl)

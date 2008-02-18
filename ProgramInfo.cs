@@ -15,6 +15,7 @@ namespace XMLTVGrabber
 		public String rating = "";
         public String category = "";
 		public String detailsURL = "";
+        public bool previouslyShown = false;
 
 		public ProgramInfo()
 		{
@@ -57,6 +58,7 @@ namespace XMLTVGrabber
 
 			XmlElement titleEl = doc.CreateElement("title");
 			titleEl.InnerText = title;
+            titleEl.SetAttribute("lang", "en");
 			prog.AppendChild(titleEl);
 
             if (subtitle.Length > 0)
@@ -68,7 +70,8 @@ namespace XMLTVGrabber
 
 			XmlElement descEl = doc.CreateElement("desc");
 			descEl.InnerText = description;
-			prog.AppendChild(descEl);
+            descEl.SetAttribute("lang", "en");
+            prog.AppendChild(descEl);
 
             if (category.Length > 0)
             {
@@ -87,13 +90,16 @@ namespace XMLTVGrabber
                 prog.AppendChild(ratingEl);
             }
 
+            if (previouslyShown)
+            {
+                XmlElement prevEl = doc.CreateElement("previously-shown");
+                prog.AppendChild(prevEl);
+            }
+
 			XmlElement lenEl = doc.CreateElement("length");
 			lenEl.SetAttribute("units", "minutes");
 			lenEl.InnerText = duration.ToString();
 			prog.AppendChild(lenEl);
-
-			XmlElement catEl = doc.CreateElement("category");
-			prog.AppendChild(catEl);
 
             if (detailsURL.Length > 0)
             {
@@ -115,6 +121,7 @@ namespace XMLTVGrabber
 			data += "duration   : " + duration + "\r\n";
 			data += "channel    : " + channel + "\r\n";
 			data += "rating     : " + rating + "\r\n";
+            data += "repeat     : " + previouslyShown.ToString() + "\r\n";
 			data += "description: " + description + "\r\n";
 			data += "progID     : " + progID + "\r\n";
 			data += "detailsURL : " + detailsURL + "\r\n";

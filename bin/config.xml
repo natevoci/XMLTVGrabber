@@ -2,7 +2,15 @@
   <BaseUrl>
     <URL>http://www20.sbs.com.au/whatson/?date=(DATESTRING)&amp;channelID=(LOCATION)</URL>
     <DateFormat>yyyy-MM-dd</DateFormat>
-	<Days>7</Days>
+    <Days>7</Days>
+    <DaysOffset>0</DaysOffset>
+<!--
+Location
+1 - Eastern States
+2 - Northern Territory
+3 - Western Australia
+5 - South Australia
+-->
     <Location>1</Location>
   </BaseUrl>
 
@@ -11,14 +19,14 @@
     <TimeOut>180</TimeOut>
     <RetryCount>3</RetryCount>
     <WorkingDir>pages</WorkingDir>
-	<WorkingDirHoursToReuse>0</WorkingDirHoursToReuse>
+	<WorkingDirHoursToReuse>2</WorkingDirHoursToReuse>
   </DownloadOptions>
 
   <ParseBasePageInfo>
-    <ItemRegEx>&lt;TD class=programlist.*?&lt;strong&gt;([0-9]{1,2}:[0-9]{2}).*?&lt;strong&gt;(.*?)(?:(?&lt;!Movie)(?&lt;!Science): (.*?))?&lt;/strong&gt;.*?&lt;/strong&gt;--&gt;(.*?(?:(?&lt;=\([^\)]*\) )\(([^\)]*)\))?(?: \((\d\d\d\d)\))?( \(Part \d+\))?( \(Rpt\))?( (?:G|PG|M|MA))?( \(\w(?:,\w)*\))?( CC)?( WS)?\s*)&lt;!--</ItemRegEx>
-    <ItemMatchOrder>TNSDG...R...</ItemMatchOrder>
+    <ItemRegEx>&lt;TD class=programlist.*?&lt;strong&gt;([0-9]{1,2}:[0-9]{2}).*?&lt;strong&gt;(.*?)(?:(?&lt;!Movie)(?&lt;!Science): (.*?))?&lt;/strong&gt;.*?DISPLAY: none"&gt;(?:&lt;a href="([^"]+))?.*?&lt;/strong&gt;--&gt;(.*?(?:(?&lt;=\([^\)]*\) )\(([^\)]*)\))?(?: \((\d\d\d\d)\))?( \(Part \d+\))?( \(Rpt\))?( (?:G|PG|M|MA))?( \(\w(?:,\w)*\))?( CC)?( WS)?\s*)&lt;!--</ItemRegEx>
+    <ItemMatchOrder>TNSUDG..PR...</ItemMatchOrder>
     <TimeFormat>HH:mm</TimeFormat>
-	<ChannelID>SBS</ChannelID>
+    <ChannelID>SBS</ChannelID>
   </ParseBasePageInfo>
 
 <!--
@@ -31,6 +39,9 @@ L = Duration
 R = Rating
 D = Description
 G = Category / Genre
+S = Subtitle
+P = Previously Shown
+U = URL
 . = Ignore
 
 Format of description ends with these optional parts

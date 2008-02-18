@@ -71,6 +71,8 @@ namespace XMLTVGrabber
 						R = Rating
 						D = Desription
                         G = Category / Genre
+                        P = Previously Shown
+                        U = Url
                         . = Ignore
 						*/
 
@@ -109,6 +111,14 @@ namespace XMLTVGrabber
                         else if(actionChar == "G")
                         {
                             info.category = groupItemData;
+                        }
+                        else if (actionChar == "P")
+                        {
+                            info.previouslyShown = groupItemData.Length > 0;
+                        }
+                        else if (actionChar == "U")
+                        {
+                            info.detailsURL = groupItemData;
                         }
                     }
 				}

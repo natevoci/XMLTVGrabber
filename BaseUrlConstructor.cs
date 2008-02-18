@@ -58,6 +58,9 @@ namespace XMLTVGrabber
             DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             int days = Int32.Parse(config.getOption("/XMLTVGrabber_Config/BaseUrl/Days"));
+            int daysOffset = Int32.Parse(config.getOption("/XMLTVGrabber_Config/BaseUrl/DaysOffset"));
+
+            date = date.AddDays(daysOffset);
 
             List<DateTime> dates = new List<DateTime>();
             for (int i = 0; i < days; i++)

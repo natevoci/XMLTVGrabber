@@ -30,6 +30,9 @@ namespace XMLTVGrabber
 
 			XmlDocument doc = new XmlDocument();
 
+            XmlDeclaration decl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            doc.AppendChild(decl);
+
 			XmlElement el = doc.CreateElement("tv");
 			doc.AppendChild(el);
 

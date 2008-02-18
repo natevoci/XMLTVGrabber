@@ -70,7 +70,7 @@ namespace XMLTVGrabber
 				for(int tryCount = 0; tryCount < retryCount && !gotData; tryCount++)
 				{
                     int result = -1;
-                    string dumpFile = workingDir + "\\pageDump" + x + ".html";
+                    string dumpFile = workingDir + "\\pageDump-" + baseURLS[x].Filename + ".html";
                     FileInfo fi = new FileInfo(dumpFile);
                     if (fi.Exists && (fi.LastWriteTime.AddHours(reuseHoursCount) > DateTime.Now))
                     {
