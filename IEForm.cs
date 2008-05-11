@@ -29,17 +29,28 @@ namespace XMLTVGrabber
 
         protected override void Dispose(bool disposing)
         {
+            RemoveWebBrowser();
+
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
+            base.Dispose(disposing);
+        }
+        private void RemoveWebBrowser()
+        {
             if (webBrowser != null)
             {
-                this.Controls.Remove(this.webBrowser);
-                webBrowser.Dispose();
+                //this.Controls.Remove(this.webBrowser);
+                try
+                {
+                    webBrowser.Dispose();
+                }
+                catch (Exception)
+                {
+                }
                 webBrowser = null;
             }
-            base.Dispose(disposing);
         }
 
         private void InitializeComponent()

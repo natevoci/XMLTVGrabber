@@ -1,11 +1,13 @@
 <XMLTVGrabber_Config>
   <BaseUrl>
-    <URL>http://www.sbs.com.au/schedule/2008-05-11/SBS%20Television</URL>
-    <!--<URL>http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Melbourne</URL>-->
-    <!--<URL>http://www.sbs.com.au/schedule/2008-05-11/SBS%20Queensland</URL>-->
-    <!--<URL>http://www.sbs.com.au/schedule/2008-05-11/SBS%20Regional</URL>-->
-    <!--<URL>http://www.sbs.com.au/schedule/2008-05-11/SBS%20SA</URL>-->
-    <!--<URL>http://www.sbs.com.au/schedule/2008-05-11/SBS%20WA</URL>-->
+    <URL>http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Melbourne</URL>
+<!--
+Sydney - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Television
+Queensland - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Queensland
+Regional - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Regional
+South Australia - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20SA
+Western Australia - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20WA
+-->
     <DateFormat>yyyy-MM-dd</DateFormat>
     <Days>7</Days>
     <DaysOffset>0</DaysOffset>
