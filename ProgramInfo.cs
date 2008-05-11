@@ -13,9 +13,9 @@ namespace XMLTVGrabber
 		public String channel = "";
 		public String description = "";
 		public String rating = "";
-        public String category = "";
+		public String category = "";
 		public String detailsURL = "";
-        public bool previouslyShown = false;
+		public bool previouslyShown = false;
 
 		public ProgramInfo()
 		{
@@ -58,56 +58,57 @@ namespace XMLTVGrabber
 
 			XmlElement titleEl = doc.CreateElement("title");
 			titleEl.InnerText = title;
-            titleEl.SetAttribute("lang", "en");
+			titleEl.SetAttribute("lang", "en");
 			prog.AppendChild(titleEl);
 
-            if (subtitle.Length > 0)
-            {
-                XmlElement subtitleEl = doc.CreateElement("sub-title");
-                subtitleEl.InnerText = subtitle;
-                subtitleEl.SetAttribute("lang", "en");
-                prog.AppendChild(subtitleEl);
-            }
+			if (subtitle.Length > 0)
+			{
+				XmlElement subtitleEl = doc.CreateElement("sub-title");
+				subtitleEl.InnerText = subtitle;
+				subtitleEl.SetAttribute("lang", "en");
+				prog.AppendChild(subtitleEl);
+			}
 
 			XmlElement descEl = doc.CreateElement("desc");
-			descEl.InnerText = description;
-            descEl.SetAttribute("lang", "en");
-            prog.AppendChild(descEl);
+			if (description.Length > 0)
+				descEl.InnerText = description;
+			descEl.SetAttribute("lang", "en");
+			prog.AppendChild(descEl);
 
-            if (category.Length > 0)
-            {
-                XmlElement categoryEl = doc.CreateElement("category");
-                categoryEl.InnerText = category;
-                prog.AppendChild(categoryEl);
-            }
+			if (category.Length > 0)
+			{
+				XmlElement categoryEl = doc.CreateElement("category");
+				categoryEl.InnerText = category;
+				prog.AppendChild(categoryEl);
+			}
 
-            if (rating.Length > 0)
-            {
-                XmlElement ratingEl = doc.CreateElement("rating");
-                ratingEl.SetAttribute("system", "ABA");
-                XmlElement ratingElvalue = doc.CreateElement("value");
-                ratingElvalue.InnerText = rating;
-                ratingEl.AppendChild(ratingElvalue);
-                prog.AppendChild(ratingEl);
-            }
+			if (rating.Length > 0)
+			{
+				XmlElement ratingEl = doc.CreateElement("rating");
+				ratingEl.SetAttribute("system", "ABA");
+				XmlElement ratingElvalue = doc.CreateElement("value");
+				ratingElvalue.InnerText = rating;
+				ratingEl.AppendChild(ratingElvalue);
+				prog.AppendChild(ratingEl);
+			}
 
-            if (previouslyShown)
-            {
-                XmlElement prevEl = doc.CreateElement("previously-shown");
-                prog.AppendChild(prevEl);
-            }
+			if (previouslyShown)
+			{
+				XmlElement prevEl = doc.CreateElement("previously-shown");
+				prog.AppendChild(prevEl);
+			}
 
 			XmlElement lenEl = doc.CreateElement("length");
 			lenEl.SetAttribute("units", "minutes");
 			lenEl.InnerText = duration.ToString();
 			prog.AppendChild(lenEl);
 
-            if (detailsURL.Length > 0)
-            {
-                XmlElement urlEl = doc.CreateElement("url");
-                urlEl.InnerText = detailsURL;
-                prog.AppendChild(urlEl);
-            }
+			if (detailsURL.Length > 0)
+			{
+				XmlElement urlEl = doc.CreateElement("url");
+				urlEl.InnerText = detailsURL;
+				prog.AppendChild(urlEl);
+			}
 
 			return true;
 		}
@@ -122,7 +123,7 @@ namespace XMLTVGrabber
 			data += "duration   : " + duration + "\r\n";
 			data += "channel    : " + channel + "\r\n";
 			data += "rating     : " + rating + "\r\n";
-            data += "repeat     : " + previouslyShown.ToString() + "\r\n";
+			data += "repeat     : " + previouslyShown.ToString() + "\r\n";
 			data += "description: " + description + "\r\n";
 			data += "progID     : " + progID + "\r\n";
 			data += "detailsURL : " + detailsURL + "\r\n";

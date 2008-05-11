@@ -15,7 +15,7 @@ namespace XMLTVGrabber
 			config = conf;
 		}
 
-        public int writeXMLTVFile(List<ProgramInfo> programs)
+		public int writeXMLTVFile(List<ProgramInfo> programs)
 		{
 			int count = 0;
 
@@ -30,16 +30,17 @@ namespace XMLTVGrabber
 
 			XmlDocument doc = new XmlDocument();
 
-            XmlDeclaration decl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-            doc.AppendChild(decl);
+			XmlDeclaration decl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+			doc.AppendChild(decl);
 
 			XmlElement el = doc.CreateElement("tv");
+			el.SetAttribute("generator-info-name", "XMLTVGrabber");
 			doc.AppendChild(el);
 
 			// add channels
 			addChannels(programs, doc, el);
 
-            foreach (ProgramInfo info in programs)
+			foreach (ProgramInfo info in programs)
 			{
 				info.addToXML(doc, el, zone);
 				count++;
@@ -51,12 +52,12 @@ namespace XMLTVGrabber
 			return count;
 		}
 
-        private int addChannels(List<ProgramInfo> programs, XmlDocument doc, XmlElement parent)
+		private int addChannels(List<ProgramInfo> programs, XmlDocument doc, XmlElement parent)
 		{
 			int count = 0;
-            List<string> channelList = new List<string>();
+			List<string> channelList = new List<string>();
 
-            foreach (ProgramInfo info in programs)
+			foreach (ProgramInfo info in programs)
 			{
 				if(!channelList.Contains(info.channel))
 				{
@@ -64,7 +65,7 @@ namespace XMLTVGrabber
 				}
 			}
 
-            foreach (string chan in channelList)
+			foreach (string chan in channelList)
 			{
 				XmlElement channel = doc.CreateElement("channel");
 				channel.SetAttribute("id", chan);

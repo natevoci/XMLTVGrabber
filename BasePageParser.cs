@@ -38,6 +38,9 @@ namespace XMLTVGrabber
 
             String channelId = config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/ChannelID");
 
+            int timeRollover = Int32.Parse(config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/TimeRollover"));
+            Console.WriteLine("Base Item Time Rollover: " + timeRollover.ToString());
+
 			Regex exp = new Regex(@baseItemRegEx, RegexOptions.IgnoreCase);
 
 			MatchCollection matchList = exp.Matches(basePageData);
@@ -83,7 +86,10 @@ namespace XMLTVGrabber
 						else if(actionChar == "T")
 						{
 							info.startTime = parseStartDate(baseURL.Date.ToString("dd/MM/yyyy") + " " + groupItemData, "dd/MM/yyyy " + baseItemTimeFormat);
-						}
+                            // if it's before 4 am then it belongs to the next day.
+                            if (info.startTime.TimeOfDay.Hours < timeRollover)
+                                info.startTime = info.startTime.AddHours(24.0);
+                        }
 						else if(actionChar == "C")
 						{
 							info.channel = HttpUtility.HtmlDecode(groupItemData);
