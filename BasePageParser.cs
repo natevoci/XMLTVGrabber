@@ -85,7 +85,8 @@ namespace XMLTVGrabber
 						}
 						else if(actionChar == "T")
 						{
-							info.startTime = parseStartDate(baseURL.Date.ToString("dd/MM/yyyy") + " " + groupItemData, "dd/MM/yyyy " + baseItemTimeFormat);
+                            string timeString = FixTime(groupItemData);
+							info.startTime = parseStartDate(baseURL.Date.ToString("dd/MM/yyyy") + " " + timeString, "dd/MM/yyyy " + baseItemTimeFormat);
                             // if it's before 4 am then it belongs to the next day.
                             if (info.startTime.TimeOfDay.Hours < timeRollover)
                                 info.startTime = info.startTime.AddHours(24.0);
@@ -140,13 +141,31 @@ namespace XMLTVGrabber
 			return count;
 		}
 
+        private string FixTime(string timeString)
+        {
+            Regex regex = new Regex(@"(\d{1,2}):(\d{1,2})", RegexOptions.IgnoreCase);
+            Match match = regex.Match(timeString);
+            if (match.Success == false)
+                throw new FormatException("Date format is incorrect.");
+
+            int hours = Int32.Parse(match.Groups[1].Value);
+            int minutes = Int32.Parse(match.Groups[2].Value);
+
+            while (hours >= 24)
+                hours -= 24;
+
+            string timeStr = hours.ToString("00") + ":" + minutes.ToString("00");
+
+            return timeStr;
+        }
+
 		private DateTime parseStartDate(String dateString, String format)
 		{
 			try
 			{
-				CultureInfo cultureInfo = new CultureInfo("en-US", true);
-				DateTime MyDateTime = DateTime.ParseExact(dateString, format, cultureInfo);
-				return MyDateTime;
+                CultureInfo cultureInfo = new CultureInfo("en-US", true);
+                DateTime myDateTime = DateTime.ParseExact(dateString, format, cultureInfo);
+                return myDateTime;
 			}
 			catch(Exception e)
 			{
