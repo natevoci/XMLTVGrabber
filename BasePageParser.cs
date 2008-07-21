@@ -52,6 +52,9 @@ namespace XMLTVGrabber
 				ProgramInfo info = new ProgramInfo();
                 info.channel = HttpUtility.HtmlDecode(channelId);
 
+                string timeString = "";
+                string timeOfDay = "";
+
 				//Console.WriteLine(match.Value);
 
 				for (int i = 1; i < match.Groups.Count; i++)
@@ -85,37 +88,37 @@ namespace XMLTVGrabber
 						}
 						else if(actionChar == "T")
 						{
-                            string timeString = FixTime(groupItemData);
-							info.startTime = parseStartDate(baseURL.Date.ToString("dd/MM/yyyy") + " " + timeString, "dd/MM/yyyy " + baseItemTimeFormat);
-                            // if it's before 4 am then it belongs to the next day.
-                            if (info.startTime.TimeOfDay.Hours < timeRollover)
-                                info.startTime = info.startTime.AddHours(24.0);
+                            timeString = FixTime(groupItemData);
                         }
-						else if(actionChar == "C")
-						{
-							info.channel = HttpUtility.HtmlDecode(groupItemData);
-						}
-						else if(actionChar == "N")
-						{
-							info.title = HttpUtility.HtmlDecode(groupItemData);
-						}
+                        else if (actionChar == "A")
+                        {
+                            timeOfDay = groupItemData;
+                        }
+                        else if (actionChar == "C")
+                        {
+                            info.channel = HttpUtility.HtmlDecode(groupItemData);
+                        }
+                        else if (actionChar == "N")
+                        {
+                            info.title = HttpUtility.HtmlDecode(groupItemData);
+                        }
                         else if (actionChar == "S")
                         {
                             info.subtitle = HttpUtility.HtmlDecode(groupItemData);
                         }
                         else if (actionChar == "L")
-						{
-							info.duration = int.Parse(groupItemData);
-						}
-						else if(actionChar == "R")
-						{
-							info.rating = groupItemData;
-						}
-						else if(actionChar == "D")
-						{
-							info.description = HttpUtility.HtmlDecode(groupItemData);
+                        {
+                            info.duration = int.Parse(groupItemData);
                         }
-                        else if(actionChar == "G")
+                        else if (actionChar == "R")
+                        {
+                            info.rating = groupItemData;
+                        }
+                        else if (actionChar == "D")
+                        {
+                            info.description = HttpUtility.HtmlDecode(groupItemData);
+                        }
+                        else if (actionChar == "G")
                         {
                             info.category = groupItemData;
                         }
@@ -129,6 +132,39 @@ namespace XMLTVGrabber
                         }
                     }
 				}
+
+                if (timeString.Length > 0)
+                {
+                    info.startTime = parseStartDate(baseURL.Date.ToString("dd/MM/yyyy") + " " + timeString, "dd/MM/yyyy " + baseItemTimeFormat);
+
+                    if (timeOfDay.ToLower() == "morning")
+                    {
+                        if (info.startTime.Hour >= 12)
+                            info.startTime = info.startTime.AddHours(-12.0);
+                    }
+                    else if (timeOfDay.ToLower() == "afternoon")
+                    {
+                        if (info.startTime.Hour < 12)
+                            info.startTime = info.startTime.AddHours(12.0);
+                    }
+                    else if (timeOfDay.ToLower() == "evening")
+                    {
+                        if (info.startTime.Hour < 12)
+                            info.startTime = info.startTime.AddHours(12.0);
+                    }
+                    else if (timeOfDay.ToLower() == "later")
+                    {
+                        if (info.startTime.Hour >= 12)
+                            info.startTime = info.startTime.AddHours(-12.0);
+                        info.startTime = info.startTime.AddDays(1.0);
+                    }
+                    else
+                    {
+                        // if it's before the rollover time (eg. 5am) then it belongs to the next day.
+                        if (info.startTime.TimeOfDay.Hours < timeRollover)
+                            info.startTime = info.startTime.AddDays(1.0);
+                    }
+                }
 
 				//Console.WriteLine(info.toString());
 				programs.Add(info);

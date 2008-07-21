@@ -30,8 +30,8 @@ Location
   </DownloadOptions>
 
   <ParseBasePageInfo>
-    <ItemRegEx>&lt;span class="tv_schedule_time"&gt;([0-9]{1,2}:[0-9]{2}).*?&lt;strong&gt;(.*?)&lt;/strong&gt;.*?tv_schedule_item_description\"&gt;\s*&lt;p&gt;(.*?(?:(?&lt;=\([^\)]*\) )\(([^\)]*)\))?(?: \((\d\d\d\d)\))?( \(Part \d+(?: of \d+)\))?( \(Rpt\))?( (?:G|PG|M|MA))?( \(\w(?:,\w)*\))?( CC)?( WS)?\s*)&lt;/p&gt;(?:.*?&lt;div class=\"additional_options\"&gt;(?:&lt;a class=\"nopad\" href="([^"]+))?.*?&lt;/div&gt;)?</ItemRegEx>
-    <ItemMatchOrder>TNDG..PR...U</ItemMatchOrder>
+    <ItemRegEx>&lt;span class="tv_schedule_time"&gt;([0-9]{1,2}:[0-9]{2}).*?&lt;strong&gt;(.*?)&lt;/strong&gt;.*?li id=\"(\D+)\d+\".*?tv_schedule_item_description\"&gt;\s*&lt;p&gt;(.*?(?:(?&lt;=\([^\)]*\) )\(([^\)]*)\))?(?: \((\d\d\d\d)\))?( \(Part \d+(?: of \d+)\))?( \(Rpt\))?( (?:G|PG|M|MA))?( \(\w(?:,\w)*\))?( CC)?( WS)?\s*)&lt;/p&gt;(?:.*?&lt;div class=\"additional_options\"&gt;(?:&lt;a class=\"nopad\" href="([^"]+))?.*?&lt;/div&gt;)?</ItemRegEx>
+    <ItemMatchOrder>TNADG..PR...U</ItemMatchOrder>
     <TimeFormat>HH:mm</TimeFormat>
     <TimeRollover>5</TimeRollover>
     <ChannelID>SBS</ChannelID>
@@ -41,6 +41,7 @@ Location
 ItemMatchOrder
 I = prog ID
 T = Time
+A = Time of day (morning/afternoon/evening/later)
 C = Channel Name
 N = Program Name
 L = Duration
