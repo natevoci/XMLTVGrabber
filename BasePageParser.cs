@@ -149,7 +149,7 @@ namespace XMLTVGrabber
                     }
                     else if (timeOfDay.ToLower() == "evening")
                     {
-                        if (info.startTime.Hour < 12)
+                        if ((info.startTime.Hour >= 6) && (info.startTime.Hour <= 12))
                             info.startTime = info.startTime.AddHours(12.0);
                     }
                     else if (timeOfDay.ToLower() == "later")
