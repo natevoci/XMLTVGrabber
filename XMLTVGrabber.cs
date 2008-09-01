@@ -122,7 +122,8 @@ namespace XMLTVGrabber
 			CheckFields(programs);
 
 			XMLWriter writer = new XMLWriter(config);
-			writer.writeXMLTVFile(programs);
+            writer.writeCSVFile(programs);
+            writer.writeXMLTVFile(programs);
 
 			//
 			// Now reload WS if needed

@@ -15,6 +15,47 @@ namespace XMLTVGrabber
 			config = conf;
 		}
 
+        public void writeCSVFile(List<ProgramInfo> programs)
+        {
+            String outFile = config.getOption("/XMLTVGrabber_Config/XMLCreation/CSVFile", true);
+            if ((outFile == null) || (outFile.Trim().Length == 0))
+                return;
+
+            Console.WriteLine("Saving csv to (" + outFile + ")");
+            FileInfo fi = new FileInfo(outFile);
+            if (fi.Directory.Exists == false)
+                fi.Directory.Create();
+
+            System.Reflection.FieldInfo[] fieldInfos = typeof(ProgramInfo).GetFields();
+
+            using (StreamWriter sw = new StreamWriter(outFile))
+            {
+                List<string> values = new List<string>();
+
+                foreach (System.Reflection.FieldInfo fieldInfo in fieldInfos)
+                {
+                    values.Add("\"" + fieldInfo.Name + "\"");
+                }
+                sw.WriteLine(string.Join(",", values.ToArray()));
+
+                foreach (ProgramInfo info in programs)
+                {
+                    values.Clear();
+
+                    foreach (System.Reflection.FieldInfo fieldInfo in fieldInfos)
+                    {
+                        object obj = fieldInfo.GetValue(info);
+                        if (obj != null)
+                            values.Add("\"" + obj.ToString().Replace("\"", "\"\"") + "\"");
+                        else
+                            values.Add("\"null\"");
+                    }
+
+                    sw.WriteLine(string.Join(",", values.ToArray()));
+                }
+            }
+        }
+
 		public int writeXMLTVFile(List<ProgramInfo> programs)
 		{
 			int count = 0;

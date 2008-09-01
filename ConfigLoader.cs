@@ -60,7 +60,12 @@ namespace XMLTVGrabber
 			return options;
 		}
 
-		public String getOption(String option)
+        public String getOption(String option)
+        {
+            return getOption(option, false);
+        }
+
+		public String getOption(String option, bool returnNullForNotExists)
 		{
 			String optionData = "";
 
@@ -75,6 +80,8 @@ namespace XMLTVGrabber
 				bool hasnext = iterator.MoveNext();
 				if(!hasnext)
 				{
+                    if (returnNullForNotExists)
+                        return null;
 					Console.WriteLine("Config Option (" + option + ") not found!");
 					System.Environment.Exit(-1);					
 				}
@@ -86,7 +93,9 @@ namespace XMLTVGrabber
 			}
 			catch(Exception e)
 			{
-				Console.WriteLine("Config Option error: \n\n" + e.ToString());
+                if (returnNullForNotExists)
+                    return null;
+                Console.WriteLine("Config Option error: \n\n" + e.ToString());
 				System.Environment.Exit(-1);
 			}
 

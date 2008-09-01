@@ -27,7 +27,7 @@ namespace XMLTVGrabber
 			basePageData = basePageData.Replace("\r\n", "");
 			basePageData = basePageData.Replace("\n", "");
 
-			String baseItemRegEx = config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/ItemRegEx");
+			String baseItemRegEx = config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/ItemRegEx").Trim();
 			Console.WriteLine("Base Item RegEx:\n" + baseItemRegEx);
 
 			String baseItemMatchOrder = config.getOption("/XMLTVGrabber_Config/ParseBasePageInfo/ItemMatchOrder");

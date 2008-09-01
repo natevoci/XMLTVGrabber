@@ -1,71 +1,76 @@
 <XMLTVGrabber_Config>
-  <BaseUrl>
-    <URL>http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Melbourne</URL>
-<!--
-Sydney - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Television
-Queensland - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Queensland
-Regional - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Regional
-South Australia - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20SA
-Western Australia - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20WA
--->
-    <DateFormat>yyyy-MM-dd</DateFormat>
-    <Days>7</Days>
-    <DaysOffset>0</DaysOffset>
-<!--
-Location
-1 - Eastern States
-2 - Northern Territory
-3 - Western Australia
-5 - South Australia
--->
-    <Location>1</Location>
-  </BaseUrl>
+	<BaseUrl>
+		<URL>http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Melbourne</URL>
+		<!--
+		Sydney - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Television
+		Queensland - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Queensland
+		Regional - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20Regional
+		South Australia - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20SA
+		Western Australia - http://www.sbs.com.au/schedule/(DATESTRING)/SBS%20WA
+		-->
+		<DateFormat>yyyy-MM-dd</DateFormat>
+		<Days>7</Days>
+		<DaysOffset>0</DaysOffset>
+		<!--
+		Location
+		1 - Eastern States
+		2 - Northern Territory
+		3 - Western Australia
+		5 - South Australia
+		-->
+		<Location>1</Location>
+	</BaseUrl>
 
-  <DownloadOptions>
-    <Referer></Referer>
-    <TimeOut>180</TimeOut>
-    <RetryCount>3</RetryCount>
-    <WorkingDir>pages</WorkingDir>
-    <WorkingDirHoursToReuse>2</WorkingDirHoursToReuse>
-  </DownloadOptions>
+	<DownloadOptions>
+		<Referer></Referer>
+		<TimeOut>180</TimeOut>
+		<RetryCount>3</RetryCount>
+		<WorkingDir>pages</WorkingDir>
+		<WorkingDirHoursToReuse>2</WorkingDirHoursToReuse>
+	</DownloadOptions>
 
-  <ParseBasePageInfo>
-    <ItemRegEx>&lt;span class="tv_schedule_time"&gt;([0-9]{1,2}:[0-9]{2}).*?&lt;strong&gt;(.*?)&lt;/strong&gt;.*?li id=\"(\D+)\d+\".*?tv_schedule_item_description\"&gt;\s*&lt;p&gt;(.*?(?:(?&lt;=\([^\)]*\) )\(([^\)]*)\))?(?: \((\d\d\d\d)\))?( \(Part \d+(?: of \d+)\))?( \(Rpt\))?( (?:G|PG|M|MA))?( \(\w(?:,\w)*\))?( CC)?( WS)?\s*)&lt;/p&gt;(?:.*?&lt;div class=\"additional_options\"&gt;(?:&lt;a class=\"nopad\" href="([^"]+))?.*?&lt;/div&gt;)?</ItemRegEx>
-    <ItemMatchOrder>TNADG..PR...U</ItemMatchOrder>
-    <TimeFormat>HH:mm</TimeFormat>
-    <TimeRollover>5</TimeRollover>
-    <ChannelID>SBS</ChannelID>
-  </ParseBasePageInfo>
+	<ParseBasePageInfo>
+		<ItemRegEx>
+			<![CDATA[
+			<span class="tv_schedule_time">.*?([0-9]{1,2}:[0-9]{2}).*?<strong>(?:<[^>]*>)?(.*?)(?:<[^>]*>)?</strong>.*?li id=\"(\D+)\d+\".*?tv_schedule_item_description\">\s*<p>(.*?(?:(?<=\([^\)]*\) )\(([^\)]*)\))?(?: \((\d\d\d\d)\))?( \(Part \d+(?: of \d+)?\))?( \(Rpt\))?( (?:G|PG|M|MA))?( \(\w(?:,\w)*\))?( CC)?( WS)?\s*)</p>(?:.*?<div class=\"additional_options\">(?:<a class=\"nopad\" href="([^"]+))?.*?</div>)?
+			]]>
+		</ItemRegEx>
+		<ItemMatchOrder>TNADG.SPR...U</ItemMatchOrder>
+		<TimeFormat>HH:mm</TimeFormat>
+		<TimeRollover>5</TimeRollover>
+		<ChannelID>SBS</ChannelID>
+	</ParseBasePageInfo>
 
-<!--
-ItemMatchOrder
-I = prog ID
-T = Time
-A = Time of day (morning/afternoon/evening/later)
-C = Channel Name
-N = Program Name
-L = Duration
-R = Rating
-D = Description
-G = Category / Genre
-S = Subtitle
-P = Previously Shown
-U = URL
-. = Ignore
+	<!--
+	ItemMatchOrder
+	I = prog ID
+	T = Time
+	A = Time of day (morning/afternoon/evening/later)
+	C = Channel Name
+	N = Program Name
+	L = Duration
+	R = Rating
+	D = Description
+	G = Category / Genre
+	S = Subtitle
+	P = Previously Shown
+	U = URL
+	. = Ignore
 
-Format of description ends with these optional parts
-(end of desc) (category) (year) (Part x) (Rpt) G/PG/M/MA (L,A,S,V) CC WS
--->
+	Format of description ends with these optional parts
+	(end of desc) (category) (year) (Part x( of y)) (Rpt) G/PG/M/MA (L,A,S,V) CC WS
+	-->
 
-<XMLCreation>
-   <OutputFile>xmltv.xml</OutputFile>
-   <TimeZone>AUTO</TimeZone>
-</XMLCreation>
+	<XMLCreation>
+		<OutputFile>xmltv.xml</OutputFile>
+		<TimeZone>AUTO</TimeZone>
+		<CSVFile></CSVFile>
+	</XMLCreation>
 
-<WebScheudler>
-   <URL>http://localhost:8429/servlet/EpgDataRes?action=14&amp;reload=1&amp;rescan=1&amp;email=1</URL>
-   <DoReload>FALSE</DoReload>
-   <OutputResponseData>TRUE</OutputResponseData>
-</WebScheudler>
+	<WebScheudler>
+		<URL>http://localhost:8429/servlet/EpgDataRes?action=14&amp;reload=1&amp;rescan=1&amp;email=1</URL>
+		<DoReload>FALSE</DoReload>
+		<OutputResponseData>TRUE</OutputResponseData>
+	</WebScheudler>
 
 </XMLTVGrabber_Config>
